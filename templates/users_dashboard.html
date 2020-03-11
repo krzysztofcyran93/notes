@@ -3,14 +3,90 @@
 {% block content %}
 
 <div class="columns is-desktop">
-  <div class="column"></div>
-  <div class="column is-half-desktop">
-    <h2 class="is-size-3">Users</h2>
-    {% for user in Users%}
-        <h2 class="is-size-4">{{user.id}}</h2>
+  <!-- center column --> 
+  <div class="column">
+    <div class="column in-half-desktop">
+      <h2 class="is-size-3">Users</h2>
+    </div>
+
+    <div class="columns">
+      <div class="column is-one-fifth" align="center">User id</div>
+      <div class="column is-one-fifth" align="center">Username</div>
+      <div class="column" align="center">Roles</div>
+      <div class="column" align="center">Departments</div>
+    </div>
+
+
+    {% for user in Users %}
+    <div class="columns">
+      <div class="column is-one-fifth">{{user.id}}</div>
+      <div class="column is-one-fifth">{{user.username}}</div>
+
+      <div class="column">
+      
+      {% if not user.roles[0] %}
+      <div class="columns"> 
+        <div class="column is-three-quarters">No role assigned</div>
+        <div class="columns">
+          <a class="navbar-item" href="#" aria-label="New Role">
+            <i class="far fa-plus-square" style="color: green"></i>
+          </a>
+<!--          <a class="navbar-item nav-link disabled" href="#" aria-label="Delete Role">
+            <i class="far fa-minus-square"></i>
+          </a>-->
+        </div>
+      </div>
+      {% else %}
+      <div class="columns"> 
+      {% for role in user.roles %}
+        <div class="column is-three-quarters">{{role.name}}</div>
+      {% endfor %}
+        <div class="columns">      
+          <a class="navbar-item" href="#" aria-label="New Role">
+            <i class="far fa-plus-square" style="color: green"></i>
+          </a>
+          <a class="navbar-item" href="#" aria-label="Delete Role">
+            <i class="far fa-minus-square" style="color: red"></i>
+          </a>
+        </div>
+      </div>
+      {% endif %}
+      </div>
+
+      <div class="column">
+      
+      {% if not user.departments[0] %}
+      <div class="columns"> 
+        <div class="column is-three-quarters" align="center">No department assigned</div>
+        <div class="columns">
+          <a class="navbar-item" href="#" aria-label="New Role">
+            <i class="far fa-plus-square" style="color: green"></i>
+          </a>
+<!--          <a class="navbar-item" href="#" aria-label="Delete Role">
+            <i class="far fa-minus-square"></i>
+          </a>-->
+        </div>
+      </div>
+      {% else %}
+      {% for department in user.departments %}
+      <div class="columns"> 
+        <div class="column is-three-quarters">{{department.name}}</div>
+        <div class="columns">
+          <a class="navbar-item" href="#" aria-label="New Department">
+            <i class="far fa-plus-square" style="color: green"></i>
+          </a>
+          <a class="navbar-item" href="#" aria-label="Delete Department">
+            <i class="far fa-minus-square" style="color: red"></i>
+          </a>
+        </div>
+      </div>
+      {% endfor %}
+      {% endif %}
+      </div>
+
+    </div> <!-- Column is-four-fifth -->
     {% endfor %}
-  </div>
-  <div class="column"></div>
-</div>
+  </div> <!-- Column is four-fifth -->
+</div> <!-- Columns is-desktop -->
 
 {% endblock %}

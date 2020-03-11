@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+  <h1 class="is-size-3">New Role</h1>
+
+  <form action="{{ url_for('role_create') }}" method="post">
+    <div class="field">
+      <label class="label" for="name">Name</label>
+      <div class="control">
+        <input name="name" value="{{ request.form['name'] }}" class="input"></input>
+      </div>
+    </div>
+
+    <div class="field is-grouped">
+      <div class="control">
+        <input type="submit" value="Create Role" class="button is-primary" />
+      </div>
+      <div class="control">
+        <a href="{{ url_for('roles_dashboard') }}" class="button is-text">Cancel</a>
+      </div>
+    </div>
+  </form>
+
+{% endblock %}

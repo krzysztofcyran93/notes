@@ -1,6 +1,16 @@
 {% extends 'base.html' %}
 
 {% block content %}
+  <div class="columns">
+    <div class="column is-11">
+      <h2 class="is-size-3">Notes</h2>
+    </div>
+    <div class="columns">
+      <a class="navbar-item" href="{{ url_for('note_create')}}" aria-label="Add Note">
+        <i class="far fa-plus-square" style="color: green"></i>
+      </a>
+    </div>
+  </div>
   {% if not notes %}
     <div class="content">
       <p>You haven't created any notes! <a href="{{ url_for('note_create')}}">Create your first note.</a>

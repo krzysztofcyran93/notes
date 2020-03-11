@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="columns is-desktop">
+  <div class="column"></div>
+  <div class="column is-one-third" align="center">
+   <div class="field">
+   <label class="label" for="title">{{ desc }}</label>
+    <form action="{{ action_url }}" method="GET">
+    <div class="columns">
+    <div class="column is-half">
+      <div class="control" align="center">
+        <input type="hidden" name="confirm" value="1">
+        <input class="button is-text" type="submit" value="Confirm">
+      </div>
+    </div>
+    <div class="column"> 
+      <div class="control" align="center">
+        <input type="hidden" name="confirm" value="0">
+        <input class="button is-text" type="submit" value="Cancel">
+      </div>
+    </div>
+    </div>
+    </form>
+    </div>
+  </div>
+  <div class="column"></div>
+</div>
+
+{% endblock %}
+

@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="columns is-desktop">
+  <div class="column"></div>
+  <div class="column is-half-desktop">
+    <div class="column">
+      <h2 class="is-size-3">Roles</h2>
+    </div>
+    <div class="columns">
+      <div class="column">Role id</div>
+      <div class="column">Role name</div>
+      {% for user_role in g.user.roles %}
+        {% if 'Admin' in user_role.name %}
+        <div class="column is-1">
+          <a class="navbar-item" href="{{ url_for('role_create') }}" aria-label="Add Role">
+            <i class="far fa-plus-square" style="color: green"></i>
+          </a>
+        </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+    {% for role in Roles %}
+      <div class="columns">
+        <div class="column">{{role.id}}</div>
+        <div class="column">{{role.name}}</div>
+        {% for user_role in g.user.roles %}
+          {% if 'Admin' in user_role.name%}
+            {% if 'Admin' in role.name %}
+              <div class="column is-1"></div>
+            {% else %}
+              <div class="column is-1">
+                <a class="navbar-item" href="{{ url_for('role_delete', role_id=role.id)}}" aria-label="Remove Role">
+                  <i class="far fa-minus-square" style="color: red"></i>
+                </a>
+              </div>
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% endfor %}
+    <div class="column is-half"> 
+    </div>
+    <div class="column">
+    </div>
+  </div>
+  <div class="column"></div>
+</div>
+
+{% endblock %}

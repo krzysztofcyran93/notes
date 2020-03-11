@@ -13,9 +13,17 @@
       <div class="container">
         <div class="navbar-brand">
           <a class="navbar-item" href="{{ url_for('index') }}">Menu</a>
+          {% if g.user %}
           <a class="navbar-item" href="{{ url_for('note_index') }}">Notes</a>
-          {% if g.user.roles == 'Admin' %}
-            <a class="navbar-item" href="{{ url_for('users_dashboard') }}">Users</a>
+          {% if g.user.roles %}
+            {% for role in g.user.roles %}
+              {% if 'Admin' in role.name %}
+                <a class="navbar-item" href="{{ url_for('users_dashboard') }}">Users</a>
+                <a class="navbar-item" href="{{ url_for('roles_dashboard') }}">Roles</a>
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+          <a class="navbar-item" href="{{ url_for('departments_dashboard') }}">Departments</a>
           {% endif %}
           <div class="navbar-burger" data-target="navMenu">
             <span></span>
@@ -27,9 +35,6 @@
           <div class="navbar-end">
             {% if g.user %}
               <h3 class="navbar-item">Welcome {{g.user.username}}!</h3>
-              <a class="navbar-item" href="{{ url_for('note_create')}}" aria-label="New Note">
-                <i class="far fa-plus-square"></i>
-              </a>
               <a class="navbar-item" href="{{ url_for('log_out')}}">
                 Log Out
               </a>

@@ -1,0 +1,22 @@
+{% extends 'departments_dashboard.html' %}
+
+{% block content %}
+
+<div class="columns is-desktop">
+  <div class="column"></div>
+  <div class="column is-one-third" align="center">
+    <h2 class="column is-size-3">Delete: {{ department.title }}</h2>
+      <div class="columns">
+        <div class="column is-half">
+          <a class="button is-danger" href='{{ url_for('department_delete', department_id=department.id) }}'>Confirm</a>
+        </div>
+        <div class="column"> 
+          <a class="button" href='{{ url_for('departments_dashboard') }}'>Cancel</a>
+        </div>
+      </div>
+  </div>
+  <div class="column"></div>
+</div>
+
+{% endblock %}
+

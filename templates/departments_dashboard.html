@@ -10,37 +10,39 @@
         <h2 class="is-size-3">Departments</h2>
       </div>
     </div>
-    <div class="columns">
-      <div class="column">Department id</div>
-      <div class="column">Department name</div>
-      {% for role in g.user.roles %}
+    <article class="message">
+    <div class="message-header">
+        <p><div class="column is-3">Department id</div>
+        <div class="column">Department name</div>
+        {% for role in g.user.roles %}
         {% if 'Admin' in role.name %}
-      <div class="column is-1">
-        <a class="navbar-item" href="{{ url_for('department_create')}}" aria-label="Add Department">
-          <i class="far fa-plus-square" style="color: green"></i>
-        </a>
-      </div>
+          <div class="column is-2">
+            <a style="width:90px;" class="button is-2 is-success" href="{{ url_for('department_create')}}" aria-label="Add Department">Add</a>
+          </div>
+        </p>
         {% endif %}
-      {% endfor %}
+        {% endfor %}
     </div>
+    </article>
     {% for department in Departments %}
+    <article class="message">
+    <div class="message">
     <div class="columns">
-      <div class="column">{{department.id}}</div>
-      <div class="column">
-        <a class="navbar-item" href="{{ url_for('department_update', department_id=department.id) }}" aria-label="Update Department">
-          {{department.title}}
-        </a>
-      </div>
+      <p><div class="column is-3" align="center">{{department.id}}</div>
+      <div class="column">{{department.title}}</div>
       {% for role in g.user.roles %}
-        {% if 'Admin' in role.name %}
-      <div class="column is-1">
-        <a class="navbar-item" href="{{ url_for('department_delete', department_id=department.id, from_url='departments_dashboard') }}" aria-label="Remove Department">
-          <i class="far fa-minus-square" style="color: red"></i>
+      {% if 'Admin' in role.name %}
+      <div class="column is-2">
+        <a class="navbar-item" href="{{ url_for('dropdown', variable_id=department.id, variable=department.title) }}" aria-label="Edit">
+          <i class="fas fa-cog" style="width:60px;"></i>
         </a>
       </div>
-        {% endif %}
+      </p>
+      {% endif %}
       {% endfor %}
     </div>
+    </div>
+    </article>
     {% endfor %}
     <div class="column is-half"> 
     </div>

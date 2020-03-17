@@ -41,11 +41,11 @@ def create_app(test_config=None):
         user_id = session.get('user_id')
         if user_id:
             g.user = User.query.get(user_id)
-            def make_session_permanent():
-                session.permanent = True
-                app.permanent_session_lifetime = timedelta(minutes=5)
         else:
             g.user = None
+    def make_session_permanent():
+        session.permanent = True
+        app.permanent_session_lifetime = timedelta(minutes=5)
 
 
 
@@ -187,6 +187,28 @@ def create_app(test_config=None):
         users = User.query.all()
         return render_template('users_dashboard.html', Users=users)
 
+    @app.route('/users/new', methods=('GET', 'POST'))
+    @require_login
+    @admin_required
+    def user_create():
+        if request.method == 'POST':
+            username = request.form['username']
+            error = None
+
+            if not name:
+                error = 'Title is required.'
+
+            if not error:
+                user = User(name=name)
+                db.session.add(user)
+                db.session.commit()
+                flash(f"Successfully created user: '{name}'", 'success')
+                return redirect(url_for('users_dashboard'))
+
+            flash(error, 'error')
+
+        return render_template('user_create.html')
+
     @app.route('/roles')
     @require_login 
     @admin_required
@@ -219,7 +241,6 @@ def create_app(test_config=None):
     @app.route('/departments')
     @require_login 
     def departments_dashboard(user_id='g.user.id'):
-        from_url = 'departments_dashboard'
         departments = Department.query.all()
         return render_template('departments_dashboard.html', Departments=departments)
 
@@ -267,33 +288,11 @@ def create_app(test_config=None):
             flash(error, 'error')
 
         return render_template('department_update.html', department=department)
+       
 
-    def confirmation_required(desc_fn):
-        def inner(f):
-            @functools.wraps(f)
-            def wrapper(*args, **kwargs):
-                if request.args.get('confirm') != '1':
-                    desc = desc_fn()
-                    return redirect(url_for('confirm', 
-                        desc=desc, action_url=quote(request.url)))
-                return f(*args, **kwargs)
-            return wrapper
-        return inner
-    
-    @app.route('/confirm')
-    def confirm():
-        desc = request.args['desc']
-        action_url = unquote(request.args['action_url'])
-    
-        return render_template('_confirm.html', desc=desc, action_url=action_url)
-    
-    def you_sure():
-        return "Are you sure?"
-    
     @app.route('/departments/<department_id>/delete', methods=('GET', 'DELETE'))
     @require_login
     @admin_required
-    @confirmation_required(you_sure)
     def department_delete(department_id):
         department = Department.query.filter_by(id=department_id).first_or_404()
         db.session.delete(department)
@@ -301,15 +300,42 @@ def create_app(test_config=None):
         flash(f"Successfully deleted department: '{department.title}'", 'success')
         return redirect(url_for('departments_dashboard'))
  
+    @app.route('/departments/<department_id>/delete/confirm')
+    @require_login
+    @admin_required 
+    def confirm_delete_department(department_id):
+        department = Department.query.filter_by(id=department_id).first_or_404()
+        return render_template('confirm_delete_department.html', department=department)
+
     @app.route('/roles/<role_id>/delete', methods=('GET', 'DELETE'))
     @require_login
     @admin_required
-    @confirmation_required(you_sure)
     def role_delete(role_id):
         role = Role.query.filter_by(id=role_id).first_or_404()
         db.session.delete(role)
         db.session.commit()
         flash(f"Successfully deleted role: '{role.name}'", 'success')
         return redirect(url_for('roles_dashboard'))
- 
+
+    @app.route('/<variable>/<variable_id>/dropdown', methods=['GET','POST'])
+    @require_login
+    @admin_required 
+    def dropdown(variable, variable_id):
+        departments = Department.query.all()
+        roles = Role.query.all()
+        users = User.query.all()
+        for department in departments:
+            if variable in department.title:
+                variables = departments
+                variable = department.title
+                Variable = "Department"
+                Variables = "Departments"
+                return render_template('dropdown.html', variable=variable, Variables=Variables, variables=variables, Variable=Variable)
+        for role in roles:
+            if variable in role.name:
+                variables = roles
+                variable = role.name
+                Variable = "Role"
+                Variables = "Roles"
+                return render_template('dropdown.html', variable=variable, Variables=Variables, variables=variables, Variable=Variable)
     return app

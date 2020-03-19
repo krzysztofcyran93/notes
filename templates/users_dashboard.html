@@ -33,7 +33,7 @@
       {% for role in g.user.roles %}
       {% if 'Admin' in role.name %}
       <div class="column is-2">
-        <a class="navbar-item" href="{{ url_for('dropdown', variable_id=user.id, variable=user) }}" aria-label="Edit">
+        <a class="navbar-item" href="{{ url_for('user_update', user_id=user.id) }}" aria-label="Edit">
           <i class="fas fa-cog" style="width:60px;"></i>
         </a>
       </div>

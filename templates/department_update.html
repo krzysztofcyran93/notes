@@ -46,10 +46,10 @@
         <input type="submit" value="Update" class="button is-primary" />
       </div>
       <div class="control">
-        <a href="{{ url_for('confirm_delete_department', department_id=department.id) }}" class="button is-danger">Delete</a>
+        <a href="{{ url_for('confirm_delete', variable_id=department.id, variable=department.title) }}" class="button is-danger">Delete</a>
       </div>
       <div class="control">
-        <a href="{{ url_for('dropdown', variable_id=department.id, variable=department) }}" class="button">Cancel</a>
+        <a href="{{ url_for('departments_dashboard') }}" class="button">Cancel</a>
       </div>
     </div>
   </form>

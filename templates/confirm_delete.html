@@ -1,0 +1,22 @@
+{% extends 'departments_dashboard.html' %}
+
+{% block content %}
+
+<div class="columns is-desktop">
+  <div class="column"></div>
+ <div class="column is-one-third" align="center">
+    <h2 class="column is-size-3">Delete: {{ variable }}</h2>
+      <div class="columns">
+        <div class="column is-half">
+          <a class="button is-danger" href='#'>Confirm</a>
+        </div>
+        <div class="column"> 
+          <a class="button" href="{{ url_for(variables_dashboard) }}">Cancel</a>
+        </div>
+      </div>
+  </div>
+  <div class="column"></div>
+</div>
+
+{% endblock %}
+

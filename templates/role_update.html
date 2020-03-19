@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+  <h1 class="is-size-3">Edit Role: {{ role.name }}</h1>
+
+  <form action="{{ url_for('role_update', role_id=role.id) }}" method="POST">
+    <div class="field">
+      <label class="label" for="name">Name</label>
+      <div class="control">
+        {% if "Admin" in role.name %}
+        <input type="hidden" name="name" value="{{ request.form['name'] or role.name }}" class="input"></input>
+        <input name="name" value="{{ request.form['name'] or role.name }}" class="input" disabled></input>
+        {% else %}
+        <input name="name" value="{{ request.form['name'] or role.name }}" class="input"></input>
+        {% endif %}
+      </div>
+    </div>
+
+      <div class="columns">
+        <div class="column">
+          <label class="label" for="body">Users</label>
+        </div>
+        <div class="column">
+        <div class="field is-narrow">
+        <div class="control">
+          <div class="select is-fullwidth">
+            <select>
+                <option name="user_name" value="None">Add User</option>
+            {% for user in users %}
+              {% if not user.roles %}
+                <option name="user_name" value="{{ request.form.user_name or user.username}}">{{user.username}}</option>
+              {% endif %}
+              {% for user_role in user.roles %}
+                {% if not role.name in user_role.name %}
+                  <option name="user_name" value="{{ request.form.user_name or user.username}}">{{ user.username }}</option>
+                {% endif %}
+              {% endfor %}
+            {% endfor %}
+           </select>
+          </div>
+        </div>
+        </div>
+        </div>
+        <div class="column is-three-quarters"></div>
+      </div>
+      {% for user in users %}
+      {% if user.roles %}
+      {% for user_role in user.roles %}
+      {% if role.name in user_role.name %}
+      <div class="columns"> 
+          <div class="column">{{ user.username }}</div>
+          <div class="column is-1">
+          <a class="navbar-item" href="#" aria-label="Remove User from role" align="center">
+            <i class="far fa-minus-square" style="color: red"></i>
+          </a>
+          </div>
+          <div class="column is-three-quarters"></div>
+      </div>
+      {% endif %}
+      {% endfor %}
+      {% endif %}
+      {% endfor %}
+
+    <div class="field is-grouped">
+      <div class="control">
+        <input type="submit" value="Update" class="button is-primary" />
+      </div>
+      <div class="control">
+      {% if not "Admin" in role.name %}
+        <a href="{{ url_for('confirm_delete', variable_id=role.id, variable=role.name) }}" class="button is-danger">Delete</a>
+      {% endif %}
+      </div>
+      <div class="control">
+        <a href="{{ url_for('roles_dashboard') }}" class="button">Cancel</a>
+      </div>
+    </div>
+  </form>
+
+{% endblock %}

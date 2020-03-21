@@ -18,7 +18,7 @@ def create_app(test_config=None):
     else:
         app.config.from_mapping(test_config)
 
-    from .models import db, User, Note, Role, UserRoles, Department
+    from .models import db, User, Note, Role, UserRoles, Department, UserDepartments
 
     user_manager = UserManager(app, db, User)
     db.init_app(app)
@@ -209,6 +209,28 @@ def create_app(test_config=None):
 
         return render_template('user_create.html')
 
+    @app.route('/users/<user_id>/edit', methods=('GET', 'POST', 'PATCH'))
+    @require_login
+    def user_update(user_id):
+        user = User.query.filter_by(id=user_id).first_or_404()
+        if request.method in ['POST', 'PATCH']:
+            username = request.form['username']
+            error = None
+
+            if not username:
+                error = 'Title is required.'
+
+            if not error:
+                user.username = username
+                db.session.add(user)
+                db.session.commit()
+                flash(f"Successfully updated user: '{username}'", 'success')
+                return redirect(url_for('user_index'))
+
+            flash(error, 'error')
+
+        return render_template('user_update.html', user=user)
+
     @app.route('/roles')
     @require_login 
     @admin_required
@@ -237,6 +259,48 @@ def create_app(test_config=None):
             flash(error, 'error')
 
         return render_template('role_create.html')
+
+    @app.route('/roles/<role_id>/edit', methods=('GET', 'POST', 'PATCH'))
+    @require_login
+    def role_update(role_id):
+        role = Role.query.filter_by(id=role_id).first_or_404()
+        users = User.query.all()
+        if request.method in ['POST', 'PATCH']:
+            name = request.form['name']
+            user_name = request.form.get('user_name')
+            error = None
+
+            if not name:
+                error = 'Name is required.'
+            
+            if not error:
+                role.name = name
+                db.session.add(role)
+                flash(f"Successfully updated role: '{name}'", 'success')
+                if user_name == "None":
+                    db.session.commit()
+                    return redirect(url_for('roles_dashboard'))
+                else:
+                    updated_user = User.query.filter_by(username=user_name).first_or_404()
+                    updated_user.roles = [role,] 
+                    db.session.add(updated_user)
+                    db.session.commit()
+                    flash(f"{user_name}, {updated_user}, {updated_user.roles[0].name}")
+                    return redirect(url_for('roles_dashboard'))
+
+            flash(error, 'error')
+
+        return render_template('role_update.html', role=role, users=users)
+
+    @app.route('/roles/<role_id>/<user_id>/delete', methods=('GET', 'DELETE'))
+    @require_login
+    @admin_required
+    def user_role_delete(role_id, user_id):
+#        department = Department.query.filter_by(id=department_id).first_or_404()
+#        db.session.delete(department)
+#        db.session.commit()
+#        flash(f"Successfully deleted department: '{department.title}'", 'success')
+        return redirect(url_for('roles_dashboard'))
 
     @app.route('/departments')
     @require_login 
@@ -300,12 +364,19 @@ def create_app(test_config=None):
         flash(f"Successfully deleted department: '{department.title}'", 'success')
         return redirect(url_for('departments_dashboard'))
  
-    @app.route('/departments/<department_id>/delete/confirm')
+    @app.route('/departments/<department_id>/delete/confirm', methods=('GET', 'POST'))
     @require_login
     @admin_required 
     def confirm_delete_department(department_id):
         department = Department.query.filter_by(id=department_id).first_or_404()
         return render_template('confirm_delete_department.html', department=department)
+
+    @app.route('/roles/<role_id>/delete/confirm', methods=('GET', 'POST'))
+    @require_login
+    @admin_required 
+    def confirm_delete_role(role_id):
+        role = Role.query.filter_by(id=role_id).first_or_404()
+        return render_template('confirm_delete_role.html', role=role)
 
     @app.route('/roles/<role_id>/delete', methods=('GET', 'DELETE'))
     @require_login
@@ -317,25 +388,23 @@ def create_app(test_config=None):
         flash(f"Successfully deleted role: '{role.name}'", 'success')
         return redirect(url_for('roles_dashboard'))
 
-    @app.route('/<variable>/<variable_id>/dropdown', methods=['GET','POST'])
+    @app.route('/<variable>/<variable_id>/delete/confirm', methods=('GET', 'POST'))
     @require_login
     @admin_required 
-    def dropdown(variable, variable_id):
+    def confirm_delete(variable_id, variable):
         departments = Department.query.all()
         roles = Role.query.all()
-        users = User.query.all()
+
         for department in departments:
-            if variable in department.title:
-                variables = departments
-                variable = department.title
-                Variable = "Department"
-                Variables = "Departments"
-                return render_template('dropdown.html', variable=variable, Variables=Variables, variables=variables, Variable=Variable)
+            if department.title in variable:
+                variable = Department.query.filter_by(id=variable_id).first_or_404().title
+                variables_dashboard = "departments_dashboard"
+                return render_template('confirm_delete.html', variable=variable, variables_dashboard=variables_dashboard)
+
         for role in roles:
-            if variable in role.name:
-                variables = roles
-                variable = role.name
-                Variable = "Role"
-                Variables = "Roles"
-                return render_template('dropdown.html', variable=variable, Variables=Variables, variables=variables, Variable=Variable)
+            if role.name in variable:
+                variable = Role.query.filter_by(id=variable_id).first_or_404().name
+                variables_dashboard = "roles_dashboard"
+                return render_template('confirm_delete.html', variable=variable, variables_dashboard=variables_dashboard)
+
     return app

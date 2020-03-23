@@ -2,9 +2,9 @@
 
 {% block content %}
 
-  <h1 class="is-size-3">Edit Role: {{ role.name }}</h1>
+  <h1 class="is-size-3">Edit Role: {{ user.name }}</h1>
 
-  <form action="{{ url_for('role_update', role_id=role.id) }}" method="POST">
+  <form action="{{ url_for('user_update', user_id=user.id) }}" method="POST">
 
     <div class="field">
 
@@ -12,11 +12,11 @@
 
         <div class="control">
 
-          {% if "Admin" in role.name %}
-            <input type="hidden" name="name" value="{{ request.form['name'] or role.name }}" class="input"></input>
-            <input name="name" value="{{ request.form['name'] or role.name }}" class="input" disabled></input>
+          {% if "Admin" in user.name %}
+            <input type="hidden" name="username" value="{{ request.form['username'] or user.username }}" class="input"></input>
+            <input name="username" value="{{ request.form['username'] or user.username }}" class="input" disabled></input>
           {% else %}
-            <input name="name" value="{{ request.form['name'] or role.name }}" class="input"></input>
+            <input name="username" value="{{ request.form['username'] or user.username }}" class="input"></input>
           {% endif %}
        </div> <!-- control -->
 
@@ -38,15 +38,15 @@
 
                 <select>
 
-                  <option name="user_name" value="None">Add User</option>
-                    {% for user in users %}
-                      {% if not user.roles %}
-                        <option name="user_name" value="{{ request.form['user_name'] or user.username}}" class="input">{{user.username}}</option>
+                  <option name="user_name" value="None">Add Role</option>
+                    {% for role in roles %}
+                      {% if not user.roles %} <!-- if user doesn't have any role -->
+                        <option name="name" value="{{ request.form['name'] or user.username}}" class="input">{{user.username}}</option>
                       {% endif %}
 
-                    {% for user_role in user.roles %}
-                      {% if not role.name in user_role.name %}
-                        <option name="user_name" value="{{ request.form['user_name'] or user.username}}" class="input">{{ user.username }}</option>
+                    {% for user_user in user.users %}
+                      {% if not user.username in user_user.username %}
+                        <option name="name" value="{{ request.form['name'] or role.name}}" class="input">{{ user.username }}</option>
                       {% endif %}
                     {% endfor %}
                   {% endfor %}
@@ -63,7 +63,7 @@
 
         <div class="column is-one-quarter">
 
-          <input name="user_name" value="{{request.form['user_name'] or None}}" class="input"></input>
+          <input name="name" value="{{request.form['name'] or None}}" class="input"></input>
 
         </div>
 
@@ -77,10 +77,10 @@
       {% if role.name in user_role.name %}
 
       <div class="columns"> 
-        <div class="column">{{ user.username }}</div>
+        <div class="column">{{ role.name }}</div>
         <div class="column is-1">
           {% if not user.username in "testuser"%}
-            <a class="navbar-item" href="{{ url_for('user_role_delete', role_id=role.id, user_id=user.id) }}" aria-label="Remove User from role" align="center">
+            <a class="navbar-item" href="{{ url_for('user_user_delete', user_id=user.id, user_id=user.id) }}" aria-label="Remove Role from user" align="center">
               <i class="far fa-minus-square" style="color: red"></i>
             </a>
           {% endif %}
@@ -100,13 +100,14 @@
         </div>
 
         <div class="control">
-         {% if not "Admin" in role.name %}
-          <a href="{{ url_for('confirm_delete', variable_id=role.id, variable=role.name) }}" class="button is-danger">Delete</a>
+         {% if not "Admin" in user.roles[0].name %}
+          <a href="{{ url_for('confirm_delete', variable_id=user.id, variable=user.name) }}" class="button is-danger">Delete</a>
          {% endif %}
         </div>
-         <div class="control">
-          <a href="{{ url_for('roles_dashboard') }}" class="button">Cancel</a>
+        <div class="control">
+          <a href="{{ url_for('users_dashboard') }}" class="button">Cancel</a>
         </div>
       </div><!-- field is grouped -->
   </form>
+
 {% endblock %}

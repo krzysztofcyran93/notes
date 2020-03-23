@@ -211,25 +211,27 @@ def create_app(test_config=None):
 
     @app.route('/users/<user_id>/edit', methods=('GET', 'POST', 'PATCH'))
     @require_login
+    @admin_required
     def user_update(user_id):
         user = User.query.filter_by(id=user_id).first_or_404()
         if request.method in ['POST', 'PATCH']:
             username = request.form['username']
+            name = request.form['name']
             error = None
 
             if not username:
-                error = 'Title is required.'
+                error = 'Username is required.'
 
             if not error:
                 user.username = username
                 db.session.add(user)
                 db.session.commit()
                 flash(f"Successfully updated user: '{username}'", 'success')
-                return redirect(url_for('user_index'))
+                return redirect(url_for('users_dashboard'))
 
             flash(error, 'error')
 
-        return render_template('user_update.html', user=user)
+        return render_template('user_update.html', user_id=user_id)
 
     @app.route('/roles')
     @require_login 
@@ -296,11 +298,16 @@ def create_app(test_config=None):
     @require_login
     @admin_required
     def user_role_delete(role_id, user_id):
+        role = Role.query.filter_by(id=role_id).first_or_404()
+        user = User.query.filter_by(id=user_id).first_or_404()
+        users = User.query.all()
+        flash(f"Successfully deleted role \"{role.name}\" from user \"{user.username}\"", 'success')
+        
 #        department = Department.query.filter_by(id=department_id).first_or_404()
 #        db.session.delete(department)
 #        db.session.commit()
 #        flash(f"Successfully deleted department: '{department.title}'", 'success')
-        return redirect(url_for('roles_dashboard'))
+        return render_template('role_update.html', role=role, users=users)
 
     @app.route('/departments')
     @require_login 

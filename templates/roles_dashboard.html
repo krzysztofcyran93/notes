@@ -12,7 +12,8 @@
     </div>
     <article class="message">
     <div class="message-header">
-        <p><div class="column is-3">Role id</div>
+        <p><div class="column is-2" align="center">Role id</div>
+        <div class="column is-1"></div>
         <div class="column">Role name</div>
         {% for role in g.user.roles %}
         {% if 'Admin' in role.name %}
@@ -28,7 +29,8 @@
     <article class="message">
     <div class="message-body">
     <div class="columns">
-      <p><div class="column is-3" align="center">{{role.id}}</div>
+      <p><div class="column is-2" align="center">{{role.id}}</div>
+      <div class="column is-1"></div>
       <div class="column">{{role.name}}</div>
       {% for user_role in g.user.roles %}
       {% if 'Admin' in user_role.name %}

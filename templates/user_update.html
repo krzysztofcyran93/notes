@@ -1,113 +1,213 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<div class="column is-desktop">
 
-  <h1 class="is-size-3">Edit Role: {{ user.name }}</h1>
+    <div class="column is-half">
 
-  <form action="{{ url_for('user_update', user_id=user.id) }}" method="POST">
+      <h1 class="is-size-3">Edit User: {{ user.username }}</h1>
 
-    <div class="field">
+	  <form action="{{ url_for('user_update', user_id=user.id) }}" method="POST">
 
-      <label class="label" for="name">Name</label>
+	    <div class="field">
+	      <label class="label" for="name">Username</label>
+		<div class="control">
+		  {% if user.username == "testuser"%}
+		    <input type="hidden" name="username" value="{{ request.form['username'] or user.username }}" class="input"></input>
+		    <input name="username" value="{{ request.form['username'] or user.username }}" class="input" disabled></input>
+		  {% else %}
+		    <input name="username" value="{{ request.form['username'] or user.username }}" class="input"></input>
+		  {% endif %}
+	       </div> <!-- control -->
+	    </div> <!-- field -->
 
-        <div class="control">
+	<!-- 
+	    Roles title and buttons to add a role
+	-->
 
-          {% if "Admin" in user.name %}
-            <input type="hidden" name="username" value="{{ request.form['username'] or user.username }}" class="input"></input>
-            <input name="username" value="{{ request.form['username'] or user.username }}" class="input" disabled></input>
-          {% else %}
-            <input name="username" value="{{ request.form['username'] or user.username }}" class="input"></input>
-          {% endif %}
-       </div> <!-- control -->
 
-    </div> <!-- field -->
+            <div class="columns">
+              <div class="column">
+	        <label class="label" for="body">Roles</label>
+	      </div> <!-- column -->
+	      <div class="column">
+	        <div class="field">
+	          <div class="control">
+	           <div class="select is-fullwidth">
+	             <select>
+			  <option name="name" value="None">Add Role</option>
+			    {% for role in roles %}
+			      {% if not user.roles %} <!-- if user doesn't have any role -->
+				<option name="name" value="{{ request.form['name'] or role.name}}" class="input">{{role.name}}</option>
+			      {% endif %}
+			      {% for user_role in user.roles %}
+				{% if not role.name in user_role.name %}
+				  <option name="name" value="{{ request.form['name'] or role.name}}" class="input">{{ role.name }}</option>
+				{% endif %}
+			      {% endfor %}
+			    {% endfor %}
+		       </select>
+		     </div> <!-- select is fullwidth-->
+		   </div> <!-- control -->
+		 </div> <!-- fiels is narrow --> 
+		</div> <!-- column --> 
+		<div class="column is-one-third">
+		  <input name="name" value="{{request.form['name'] or 'None'}}" class="input"></input>
+		</div>
+	      </div> <!-- columns -->
 
-      <div class="columns">
+	<!-- 
+	    Show roles
+	-->
 
-        <div class="column">
-          <label class="label" for="body">Users</label>
-        </div> <!-- column -->
+	      {% if not user.roles %}
+	      <h3>This user doesn't have any role yet.</h3>
+	      {% else %}
+		  <table class="table is-striped is-fullwidth is-hoverable is-bordered">
+		  <thead><!-- top part of the table -->
+		    <tr><!-- each table row -->
+		      <th>No</th>
+		      <th>Name</th>
+		      <th>Action</th>
+		    </tr>
+		  </thead> 
+		  <tbody>
+		{% for role in roles %}
+		  {% if role in user.roles %}
+		    <tr>
+		      <td>{{ loop.index }}</td>
+		      <td>{{role.name}}</td>
+		      <td>
+			<a class="navbar-item" href="{{ url_for('user_role_delete', role_id=role.id, user_id=user.id) }}" aria-label="Remove User from role" align="center">
+			  <i class="far fa-minus-square" style="color: red"></i>
+			</a>
+		      </td>
+		    </tr>
+	<!--
+		    <div class="columns">
+		      <div class="column">{{role.name}}</div>
+		      <div class="column is-1">
+			<a class="navbar-item" href="{{ url_for('user_role_delete', role_id=role.id, user_id=user.id) }}" aria-label="Remove User from role" align="center">
+			  <i class="far fa-minus-square" style="color: red"></i>
+			</a>
+		      </div>
+		    </div>
+	-->
+		  {% endif %}
+		{% endfor %}
+		  </tbody>
+		  <table>
+	      {% endif %}
 
-        <div class="column">
+	<!-- 
+	    Departments title and buttons to add a department
+	-->
 
-          <div class="field is-narrow">
+	      <div class="columns">
+		<div class="column">
+		  <label class="label" for="body">Departments</label>
+		</div> <!-- column -->
+		<div class="column">
+		  <div class="field is-narrow">
+		    <div class="control">
+		      <div class="select is-fullwidth">
+			<select>
+			  <option name="name" value="None">Add Department</option>
+			    {% for department in departments %}
+			      {% if not user.departments %} <!-- if user doesn't have any role -->
+				<option name="title" value="{{ request.form['title'] or department.title}}" class="input">{{department.title}}</option>
+			      {% endif %}
+			      {% for user_department in user.departments %}
+				{% if not department.title in user_department.title %}
+				  <option name="title" value="{{ request.form['title'] or department.title}}" class="input">{{ department.title }}</option>
+				{% endif %}
+			      {% endfor %}
+			    {% endfor %}
+		       </select>
+		     </div> <!-- select is fullwidth-->
+		   </div> <!-- control -->
+		 </div> <!-- fiels is narrow --> 
+		</div> <!-- column --> 
+		<div class="column is-one-third">
+		  <input name="title" value="{{request.form['title'] or 'None'}}" class="input"></input>
+		</div>
+	      </div> <!-- columns -->
 
-            <div class="control">
+	<!-- 
+	    Show departments
+	-->
+	      {% if not user.departments %}
+	      <h2 class="subtitle" align="center">This user doesn't have any department yet.</h2>
+	      {% else %}
+		  <table class="table is-striped is-fullwidth is-hoverable is-bordered">
+		  <thead><!-- top part of the table -->
+		    <tr><!-- each table row -->
+		      <th>No</th>
+		      <th>Title</th>
+		      <th>Action</th>
+		    </tr>
+		  </thead> 
+		  <tbody>
+		{% for department in departments %}
+		  {% if department in user.departments %}
+		    <tr>
+		      <td>{{ loop.index }}</td>
+		      <td>{{department.title}}</td>
+		      <td>
+			<a class="navbar-item" href="{{ url_for('user_department_delete', department_id=department.id, user_id=user.id) }}" aria-label="Remove User from department" align="center">
+			  <i class="far fa-minus-square" style="color: red"></i>
+			</a>
+		      </td>
+		    </tr>
+	<!--
+		    <div class="columns">
+		      <div class="column">{{department.title}}</div>
+		      <div class="column is-1">
+			<a class="navbar-item" href="{{ url_for('user_department_delete', department_id=department.id, user_id=user.id) }}" aria-label="Remove User from department" align="center">
+			  <i class="far fa-minus-square" style="color: red"></i>
+			</a>
+		      </div>
+		    </div>
+	-->
+		  {% endif %}
+		{% endfor %}
+		  </tbody>
+		  <table>
+	      {% endif %}
+	      
 
-              <div class="select is-fullwidth">
 
-                <select>
+	<!-- 
+	    Show bottom buttons 
+	-->
 
-                  <option name="user_name" value="None">Add Role</option>
-                    {% for role in roles %}
-                      {% if not user.roles %} <!-- if user doesn't have any role -->
-                        <option name="name" value="{{ request.form['name'] or user.username}}" class="input">{{user.username}}</option>
-                      {% endif %}
 
-                    {% for user_user in user.users %}
-                      {% if not user.username in user_user.username %}
-                        <option name="name" value="{{ request.form['name'] or role.name}}" class="input">{{ user.username }}</option>
-                      {% endif %}
-                    {% endfor %}
-                  {% endfor %}
+	      <div class="field is-grouped">
 
-               </select>
+		<div class="control">
+		  <input type="submit" value="Update Role" class="button is-primary"></input>
+		</div>
+		<div class="control">
+		 {% if not "Admin" in user.roles[0].name %}
+		  <a href="{{ url_for('confirm_delete', variable_id=user.id, variable=user.username) }}" class="button is-danger">Delete</a>
+		 {% endif %}
+		</div>
+		<div class="control">
+		  <a href="{{ url_for('users_dashboard') }}" class="button">Cancel</a>
+		</div>
 
-             </div> <!-- select is fullwidth-->
+	      </div><!-- field is grouped -->
 
-           </div> <!-- control -->
+	  </form>
 
-         </div> <!-- fiels is narrow --> 
+      </div><!-- column is-half --> 
 
-        </div> <!-- column --> 
+      <div class="column">
 
-        <div class="column is-one-quarter">
+          <h1 class="is-size-3">{{ user.username }} Notes</h1>
 
-          <input name="name" value="{{request.form['name'] or None}}" class="input"></input>
+      </div>  
 
-        </div>
-
-        <div class="column is-half"></div>
-
-      </div> <!-- columns -->
-
-      {% for user in users %}
-      {% if user.roles %}
-      {% for user_role in user.roles %}
-      {% if role.name in user_role.name %}
-
-      <div class="columns"> 
-        <div class="column">{{ role.name }}</div>
-        <div class="column is-1">
-          {% if not user.username in "testuser"%}
-            <a class="navbar-item" href="{{ url_for('user_user_delete', user_id=user.id, user_id=user.id) }}" aria-label="Remove Role from user" align="center">
-              <i class="far fa-minus-square" style="color: red"></i>
-            </a>
-          {% endif %}
-        </div>
-        <div class="column is-three-quarters"></div>
-      </div>
-
-      {% endif %}
-      {% endfor %}
-      {% endif %}
-      {% endfor %}
-
-      <div class="field is-grouped">
-
-        <div class="control">
-          <input type="submit" value="Update Role" class="button is-primary"></input>
-        </div>
-
-        <div class="control">
-         {% if not "Admin" in user.roles[0].name %}
-          <a href="{{ url_for('confirm_delete', variable_id=user.id, variable=user.name) }}" class="button is-danger">Delete</a>
-         {% endif %}
-        </div>
-        <div class="control">
-          <a href="{{ url_for('users_dashboard') }}" class="button">Cancel</a>
-        </div>
-      </div><!-- field is grouped -->
-  </form>
+</div>
 
 {% endblock %}

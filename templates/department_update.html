@@ -5,6 +5,7 @@
   <h1 class="is-size-3">Edit Department: {{ department.title }}</h1>
 
   <form action="{{ url_for('department_update', department_id=department.id) }}" method="POST">
+
     <div class="field">
       <label class="label" for="title">Title</label>
       <div class="control">
@@ -12,46 +13,75 @@
       </div>
     </div>
 
-    <div class="field is-grouped">
       <div class="columns">
-      <div class="column">
-        <label class="label" for="body">Users</label>
-      </div>
-      <div class="column is-1">
-          <a class="navbar-item" href="#" aria-label="Add User to department">
-            <i class="far fa-plus-square" style="color: green"></i>
-          </a>
-      </div>
-      </div>
-        {% for user in users %}
-          {% if user.departments %}
-            {% for department in user.departments %}
-              {% if department.title in department %}
-                <div class="column">{{ user.username }}</div>
-                <div class="column">
-                <a class="navbar-item" href="#" aria-label="Remove User from department">
-                  <i class="far fa-minus-square" style="color: red"></i>
-                </a>
-                </div>
-              {% endif %}
-            {% endfor %}
-          {% endif %}
-        {% endfor %}
-      <div class="control">
-      </div>
-    </div>
+        <div class="column">
+          <label class="label" for="body">Users</label>
+        </div> <!-- column -->
+        <div class="column">
+          <div class="field is-narrow">
+            <div class="control">
+              <div class="select is-fullwidth">
+                <select id="options" name="options">
+                  <option name="user_name" value="None">Add User</option>
+                    {% for user in users %}
+                      {% if not user.departments %}
+                        <option name="user_name" value="{{ request.form['user_name'] or user.username}}" class="input">{{user.username}}</option>
+                      {% endif %}
 
-    <div class="field is-grouped">
-      <div class="control">
-        <input type="submit" value="Update" class="button is-primary" />
+                      {% if department.title not in user.departments %}
+                          <option name="user_name" value="{{ request.form['user_name'] or user.username}}" class="input">{{ user.username }}</option>
+                        {% endif %}
+                    {% endfor %}
+               </select>
+             </div> <!-- select is fullwidth-->
+           </div> <!-- control -->
+         </div> <!-- fiels is narrow -->
+        </div> <!-- column -->
+        <div class="column is-one-quarter">
+          <input name="user_name" value="{{request.form['user_name'] or None}}" class="input"></input>
+        </div>
+        <div class="column is-half"></div>
+      </div> <!-- columns -->
+
+
+
+
+      {% for user in users %}<!-- for every user in all users -->
+      {% if user.departments %}<!-- if the user has any department -->
+      {% for user_department in user.departments %}<!-- for every department in user's departments-->
+      {% if department.title in user_department.title %}<!-- if user's department's title is the same as the department title -->
+
+      <div class="columns">
+        <div class="column">{{ user.username }}</div>
+        <div class="column is-1">
+            <a class="navbar-item" href="{{ url_for('user_department_delete', department_id=department.id, user_id=user.id) }}" aria-label="Remove User from department" align="center">
+              <i class="far fa-minus-square" style="color: red"></i>
+            </a>
+        </div>
+        <div class="column is-three-quarters"></div>
       </div>
-      <div class="control">
-        <a href="{{ url_for('confirm_delete', variable_id=department.id, variable=department.title) }}" class="button is-danger">Delete</a>
-      </div>
-      <div class="control">
-        <a href="{{ url_for('departments_dashboard') }}" class="button">Cancel</a>
-      </div>
-    </div>
+
+      {% endif %}
+      {% endfor %}
+      {% endif %}
+      {% endfor %}
+
+
+      <div class="field is-grouped">
+
+        <div class="control">
+          <input type="submit" value="Update Department" class="button is-primary"></input>
+        </div>
+
+        <div class="control">
+          <a href="{{ url_for('confirm_delete', variable_id=department.id, variable=department.title) }}" class="button is-danger">Delete</a>
+        </div>
+         <div class="control">
+          <a href="{{ url_for('departments_dashboard') }}" class="button">Cancel</a>
+        </div>
+      </div><!-- field is grouped -->
   </form>
+
+
 
 {% endblock %}

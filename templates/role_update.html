@@ -44,12 +44,12 @@
                         <option name="user_name" value="{{ request.form['user_name'] or user.username}}" class="input">{{user.username}}</option>
                       {% endif %}
 
-                    {% for user_role in user.roles %}
-                      {% if not role.name in user_role.name %}
-                        <option name="user_name" value="{{ request.form['user_name'] or user.username}}" class="input">{{ user.username }}</option>
-                      {% endif %}
+                      {% for user_role in user.roles %}
+                        {% if not role.name in user_role.name %}
+                          <option name="user_name" value="{{ request.form['user_name'] or user.username}}" class="input">{{ user.username }}</option>
+                        {% endif %}
+                      {% endfor %}
                     {% endfor %}
-                  {% endfor %}
 
                </select>
 
@@ -71,15 +71,15 @@
 
       </div> <!-- columns -->
 
-      {% for user in users %}
-      {% if user.roles %}
-      {% for user_role in user.roles %}
-      {% if role.name in user_role.name %}
+      {% for user in users %}<!-- for every user in all users --> 
+      {% if user.roles %}<!-- if the user has any role -->
+      {% for user_role in user.roles %}<!-- for every role in user's roles-->
+      {% if role.name in user_role.name %}<!-- if user's role's name is the same as the role name -->
 
       <div class="columns"> 
         <div class="column">{{ user.username }}</div>
         <div class="column is-1">
-          {% if not user.username in "testuser"%}
+          {% if not user.username in "testuser"%}<!-- you cannot remove testuser from that role  -->
             <a class="navbar-item" href="{{ url_for('user_role_delete', role_id=role.id, user_id=user.id) }}" aria-label="Remove User from role" align="center">
               <i class="far fa-minus-square" style="color: red"></i>
             </a>

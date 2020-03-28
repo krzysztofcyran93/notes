@@ -12,11 +12,12 @@
     </div>
     <article class="message">
     <div class="message-header">
-        <p><div class="column is-3">User id</div>
-        <div class="column">User name</div>
+        <p><div class="column is-2" align="center">User id</div>
+        <div class="column">Username</div>
         {% for role in g.user.roles %}
         {% if 'Admin' in role.name %}
           <div class="column">User's roles</div>
+          <div class="column">User's departments</div>
           <div class="column is-2">
             <a style="width:90px;" class="button is-2 is-success" href="{{ url_for('user_create')}}" aria-label="Add User">Add</a>
           </div>
@@ -29,13 +30,21 @@
     <article class="message">
     <div class="message-body">
       <div class="columns">
-      <p><div class="column is-3">{{user.id}}</div>
+      <p><div class="column is-2" align="center">{{user.id}}</div>
       <div class="column">{{user.username}}</div>
       {% for role in g.user.roles %}
       {% if 'Admin' in role.name %}
-      {% for user_role in user.roles %}
-        <div class="column">{{user_role.name}}</div>
-      {% endfor %}
+        <div class="column">
+          {% for user_role in user.roles %}
+            {{user_role.name}}
+          {% endfor %}
+        </div>
+      
+        <div class="column">
+          {% for user_department in user.departments %}
+            {{user_department.title}}
+          {% endfor %}
+        </div>
       <div class="column is-2">
         <a class="navbar-item" href="{{ url_for('user_update', user_id=user.id) }}" aria-label="Edit">
           <i class="fas fa-cog" style="width:60px;"></i>

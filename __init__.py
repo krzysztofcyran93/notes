@@ -216,6 +216,7 @@ def create_app(test_config=None):
         user = User.query.filter_by(id=user_id).first_or_404()
         roles = Role.query.all()
         departments = Department.query.all()
+        rest = compare(user.departments, departments)
         if request.method in ['POST', 'PATCH']:
             username = request.form['username']
             name = request.form['name']
@@ -232,8 +233,7 @@ def create_app(test_config=None):
                 department = Department.query.filter_by(title=title).first_or_404
                 role = Role.query.filter_by(name=name).first_or_404()
                 if (name and title) == 'None':
-                    db.session.commit()
-                    return render_template('user_update.html', user=user, roles=roles, departments=departments)
+                    return render_template('user_update.html', user=user, user_id=user.id, roles=roles, departments=departments)
                 elif 'None' in name:
                     updated_user.departments.append(department)
                     db.session.add(updated_user)
@@ -460,4 +460,13 @@ def create_app(test_config=None):
                 variables_dashboard = "roles_dashboard"
                 return render_template('confirm_delete.html', variable=variable, variables_dashboard=variables_dashboard)
 
+
+    def compare(list1, list2):
+        set_difference = set(list1) - set(list2)
+        list_difference = list(set_difference)
+        return list_difference 
+
+
+
     return app
+

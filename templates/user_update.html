@@ -36,16 +36,17 @@
         	           <div class="select is-fullwidth">
         	             <select>
             			       <option name="name" value="None">Add Role</option>
-              			       {% for role in roles %}
-                			       {% if not user.roles %} <!-- if user doesn't have any role -->
+                		       {% if not user.roles %} <!-- if user doesn't have any role -->
+              			           {% for role in roles %}
                   				     <option name="name" value="{{ request.form['name'] or role.name}}" class="input">{{role.name}}</option>
-                  			     {% endif %}
-                  			     {% for user_role in user.roles %}
-                  				     {% if not role.name in user_role.name %}
+                  			     {% endfor %}
+                                       {% else %}
+                  			     {% for role in roles %}
+                  				     {% if not role in user.roles %}
                   			  	     <option name="name" value="{{ request.form['name'] or role.name}}" class="input">{{ role.name }}</option>
                   				     {% endif %}
                 			       {% endfor %}
-              			       {% endfor %}
+              			       {% endif %}
             		        </select>
             		      </div> <!-- select is fullwidth-->
             		    </div> <!-- control -->
@@ -61,7 +62,7 @@
   	-->
 
   	      {% if not user.roles %}
-  	      <h3>This user doesn't have any role yet.</h3>
+  	      <h2 class="subtitle" align="center">This user doesn't have any role yet.</h2>
   	      {% else %}
   		  <table class="table is-striped is-fullwidth is-hoverable is-bordered">
   		  <thead><!-- top part of the table -->
@@ -113,16 +114,18 @@
         		      <div class="select is-fullwidth">
         			<select>
         			  <option name="name" value="None">Add Department</option>
-        			    {% for department in departments %}
         			      {% if not user.departments %} <!-- if user doesn't have any role -->
+        			        {% for department in departments %}
         				<option name="title" value="{{ request.form['title'] or department.title}}" class="input">{{department.title}}</option>
-        			      {% endif %}
-        			      {% for user_department in user.departments %}
-        				{% if not department.title in user_department.title %}
+        			        {% endfor %}
+        			      {% else %}
+        			        {% for department in departments %}
+
+        				  {% if not department in user.departments %}
         				  <option name="title" value="{{ request.form['title'] or department.title}}" class="input">{{ department.title }}</option>
-        				{% endif %}
-        			      {% endfor %}
-        			    {% endfor %}
+        				  {% endif %}
+        			        {% endfor %}
+        		       	      {% endif %}
         		       </select>
         		     </div> <!-- select is fullwidth-->
         		   </div> <!-- control -->
@@ -188,7 +191,7 @@
         		  <input type="submit" value="Update Role" class="button is-primary"></input>
         		</div>
         		<div class="control">
-        		 {% if not "Admin" in user.roles[0].name %}
+        		 {% if not "Admin" in user.roles %}
         		  <a href="{{ url_for('confirm_delete', variable_id=user.id, variable=user.username) }}" class="button is-danger">Delete</a>
         		 {% endif %}
         		</div>
@@ -202,11 +205,46 @@
 
     </div><!-- column is-half -->
 
-    <div class="column">
+  	<!--
+  	    Show notes 
+  	-->
 
-      <h1 class="is-size-3">{{ user.username }} Notes</h1>
+    <div class="column is-half">
 
+      <h1 class="header is-size-3">{{ user.username }}'s notes</h1>
+      <div class="column">
+	  {% if not user.notes %}
+            {% if user == g.user %}
+	    <div class="content">
+	      <p>This user doesn't have any notes yet! <a href="{{ url_for('note_create')}}">Create your first note.</a></p>
+	    </div>
+            {% else %}
+            <div>
+	      <p>This user doesn't have any notes yet!</p>
+	    </div>
+            {% endif %}
+          {% else %}
+	  {% for note in user.notes %}
+	    <article class="message">
+	      <div class="message-header">
+		<p>{{ note.title }}</p>
+		<div>
+		  <a class="button is-primary is-small has-text-weight-bold" href="{{ url_for('note_update', note_id=note.id )}}">
+		    Edit Note
+		  </a>
+		  <a class="button is-danger is-small has-text-weight-bold" href="{{ url_for('note_delete', note_id=note.id) }}">
+		    Delete Note
+		  </a>
+		</div>
+	      </div>
+	      <div class="message-body content">
+		{{ note.body_html|safe }}
+	      </div>
+	    </article>
+          {% endfor %}
+          {% endif %}
     </div>
+    </div><!--column-->
 
 </div>
 

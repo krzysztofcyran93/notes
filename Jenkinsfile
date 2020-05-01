@@ -3,7 +3,8 @@ pipeline {
   stages {
     stage('Build') {
       steps {
-        sh 'git status' 
+        sh 'git status'
+        sh 'git pull'
       }
     }
   }

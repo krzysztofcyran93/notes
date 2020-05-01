@@ -4,8 +4,9 @@ from flask import Flask, render_template, redirect, url_for, request, session, f
 from flask_migrate import Migrate
 from urllib.parse import urlencode, quote, unquote
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_user import roles_required, UserManager 
-from datetime import timedelta 
+from flask_user import roles_required, UserManager
+from datetime import timedelta
+import date
 
 def create_app(test_config=None):
     app = Flask(__name__)
@@ -96,7 +97,13 @@ def create_app(test_config=None):
 
     @app.route('/')
     def index():
-        return render_template('index.html')
+        x = datetime.datetime.now()
+        day = x.strftime("%A")
+        daynum = x.strftime("%d")
+        month = x.strftime("%B")
+        year = x.strftime("%Y")
+        date = print(f"Today is %s, the %d of %s %d" % (day, daynum, month, year))
+        return render_template('index.html', date)
 
     @app.route('/log_out', methods=('GET', 'DELETE'))
     def log_out():
@@ -167,7 +174,7 @@ def create_app(test_config=None):
     def admin_required(f):
         @functools.wraps(f)
         def wrap(*args, **kwargs):
-            if g.user.roles: 
+            if g.user.roles:
                 for role in g.user.roles:
                     if 'Admin' in role.name:
                         return f(*args, **kwargs)
@@ -180,7 +187,7 @@ def create_app(test_config=None):
         return wrap
 
     @app.route('/users')
-    @require_login 
+    @require_login
     @admin_required
     def users_dashboard(user_id='g.user.id'):
         user_id = session.get('user_id')
@@ -260,7 +267,7 @@ def create_app(test_config=None):
         return render_template('user_update.html', user=user, roles=roles, departments=departments)
 
     @app.route('/roles')
-    @require_login 
+    @require_login
     @admin_required
     def roles_dashboard(user_id='g.user.id'):
         roles = Role.query.all()
@@ -300,7 +307,7 @@ def create_app(test_config=None):
 
             if not name:
                 error = 'Name is required.'
-            
+
             if not error:
                 role.name = name
                 db.session.add(role)
@@ -334,7 +341,7 @@ def create_app(test_config=None):
         return render_template('role_update.html', role=role, users=users)
 
     @app.route('/departments')
-    @require_login 
+    @require_login
     def departments_dashboard(user_id='g.user.id'):
         departments = Department.query.all()
         return render_template('departments_dashboard.html', Departments=departments)
@@ -389,11 +396,11 @@ def create_app(test_config=None):
                     db.session.commit()
                     flash(f"{user_name}, {updated_user}, {updated_user.departments[0].title}")
                     return render_template('department_update.html', department=department, users=users)
-                
+
             flash(error, 'error')
 
         return render_template('department_update.html', department=department, users=users)
-       
+
     @app.route('/departments/<department_id>/delete', methods=('GET', 'DELETE'))
     @require_login
     @admin_required
@@ -403,10 +410,10 @@ def create_app(test_config=None):
         db.session.commit()
         flash(f"Successfully deleted department: '{department.title}'", 'success')
         return redirect(url_for('departments_dashboard'))
- 
+
     @app.route('/departments/<department_id>/delete/confirm', methods=('GET', 'POST'))
     @require_login
-    @admin_required 
+    @admin_required
     def confirm_delete_department(department_id):
         department = Department.query.filter_by(id=department_id).first_or_404()
         return render_template('confirm_delete_department.html', department=department)
@@ -426,7 +433,7 @@ def create_app(test_config=None):
 
     @app.route('/roles/<role_id>/delete/confirm', methods=('GET', 'POST'))
     @require_login
-    @admin_required 
+    @admin_required
     def confirm_delete_role(role_id):
         role = Role.query.filter_by(id=role_id).first_or_404()
         return render_template('confirm_delete_role.html', role=role)
@@ -443,7 +450,7 @@ def create_app(test_config=None):
 
     @app.route('/<variable>/<variable_id>/delete/confirm', methods=('GET', 'POST'))
     @require_login
-    @admin_required 
+    @admin_required
     def confirm_delete(variable_id, variable):
         departments = Department.query.all()
         roles = Role.query.all()

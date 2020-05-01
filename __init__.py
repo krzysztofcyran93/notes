@@ -6,7 +6,11 @@ from urllib.parse import urlencode, quote, unquote
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_user import roles_required, UserManager
 from datetime import timedelta
+<<<<<<< HEAD
 import datetime
+=======
+import date
+>>>>>>> 7b9bd687c89ac46c7356caee2faa087506076e99
 
 def create_app(test_config=None):
     app = Flask(__name__)

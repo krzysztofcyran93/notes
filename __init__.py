@@ -6,7 +6,7 @@ from urllib.parse import urlencode, quote, unquote
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_user import roles_required, UserManager
 from datetime import timedelta
-import time
+import datetime
 
 def create_app(test_config=None):
     app = Flask(__name__)
@@ -102,8 +102,8 @@ def create_app(test_config=None):
         daynum = x.strftime("%d")
         month = x.strftime("%B")
         year = x.strftime("%Y")
-        date = print(f"Today is %s, the %d of %s %d" % (day, daynum, month, year))
-        return render_template('index.html', date)
+        date = print(f"Today is %s, the %s of %s %s" % (day, daynum, month, year))
+        return render_template('index.html')
 
     @app.route('/log_out', methods=('GET', 'DELETE'))
     def log_out():

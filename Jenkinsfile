@@ -8,7 +8,7 @@ pipeline {
         whoami
         pwd
         ls
-        sudo . /home/centos/.local/share/virtualenvs/notes-scW2TLqU/bin/activate
+        sudo source /home/centos/.local/share/virtualenvs/notes-scW2TLqU/bin/activate
         cat findings.txt
         git fetch
         git status

@@ -4,10 +4,10 @@ pipeline {
     stage('Build') {
       steps {
         sh """
-        who
+        whoami
         pwd
         ls
-        sudo find . -type f -iname "activate"
+        sudo find . -type f -iname "activate" > findings.txt
         git status
         git fetch
         """

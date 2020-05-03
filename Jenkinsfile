@@ -4,6 +4,7 @@ pipeline {
     stage('Build') {
       steps {
         sh 'git status'
+        sh 'git pull'
       }
     }
   }

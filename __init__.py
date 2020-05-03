@@ -10,7 +10,6 @@ import datetime
 from flask import has_request_context, request
 from flask.logging import default_handler
 
-app.logger.removeHandler(default_handler)
 
 dictConfig({
     'version': 1,
@@ -63,6 +62,9 @@ def create_app(test_config=None):
     user_manager = UserManager(app, db, User)
     db.init_app(app)
     migrate = Migrate(app, db)
+
+    app.logger.removeHandler(default_handler)
+
 
     def require_login(view):
         @functools.wraps(view)

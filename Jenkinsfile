@@ -3,8 +3,11 @@ pipeline {
   stages {
     stage('Build') {
       steps {
-        sh 'git status'
-        sh 'git pull notes stage'
+        sh """
+        sudo -s
+        source /home/centos/.local/share/virtualenvs/notes-scW2TLqU/bin/activate
+        git status
+        """
       }
     }
   }

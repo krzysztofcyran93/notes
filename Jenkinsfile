@@ -5,7 +5,7 @@ pipeline {
       steps {
         sh """
         pwd
-        sudo -s source /home/jenkins/.local/share/virtualenvs/jenkins-39SWxFAg/bin/activate
+        cd /home/centos/notes/
         git status
         """
       }

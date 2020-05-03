@@ -7,7 +7,7 @@ pipeline {
         who
         pwd
         ls
-        pipenv shell
+        sudo find . -type f -iname "activate"
         git status
         git fetch
         """

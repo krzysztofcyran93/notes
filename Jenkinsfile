@@ -5,7 +5,7 @@ pipeline {
       steps {
         sh """
         pwd
-        cd /home/centos/notes/
+        sudo cd /home/centos/notes/
         git status
         """
       }

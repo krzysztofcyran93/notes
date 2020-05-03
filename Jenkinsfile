@@ -4,7 +4,8 @@ pipeline {
     stage('Build') {
       steps {
         sh """
-        sudo -s ls /home/centos/.local/share/virtualenvs/
+        pwd
+        sudo -s ls /home/centos/
         git status
         """
       }

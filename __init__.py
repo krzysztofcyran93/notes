@@ -109,7 +109,7 @@ def create_app(test_config=None):
         daynum = x.strftime("%d")
         month = x.strftime("%B")
         year = x.strftime("%Y")
-        date = "Today is %s, the %s of %s %s" % day, daynum, month, year
+        date = "Today is {day}, the {daynum} of {month} {year}".format(day, daynum, month, year)
         return render_template('index.html')
 
     @app.route('/log_out', methods=('GET', 'DELETE'))

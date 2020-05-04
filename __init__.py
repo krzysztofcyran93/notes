@@ -13,7 +13,6 @@ from flask.logging import default_handler
 
 
 
-
 class RequestFormatter(logging.Formatter):
     def format(self, record):
         if has_request_context():

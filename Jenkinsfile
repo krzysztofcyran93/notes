@@ -6,10 +6,10 @@ pipeline {
         sh """
         whoami
         pwd
-        sudo su - centos & pwd & cd ~/ & ls -lrt
+        sudo su - centos & ls -lrt > new_findings.txt
         """
         sh """
-        cat findings.txt
+        pwd
         git fetch
         git status
         """

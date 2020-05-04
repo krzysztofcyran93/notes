@@ -474,7 +474,7 @@ def create_app(test_config=None):
                 variables_dashboard = "roles_dashboard"
                 return render_template('confirm_delete.html', variable=variable, variables_dashboard=variables_dashboard)
 
-
+    # return difference between 2 lists
     def compare(list1, list2):
         set_difference = set(list1) - set(list2)
         list_difference = list(set_difference)

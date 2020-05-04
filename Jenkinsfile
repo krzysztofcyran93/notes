@@ -7,8 +7,7 @@ pipeline {
         hostname
         whoami
         pwd
-        ls
-        sudo source /home/centos/.local/share/virtualenvs/notes-scW2TLqU/bin/activate
+        ls /home/centos/notes > findings.txt
         cat findings.txt
         git fetch
         git status

@@ -6,7 +6,7 @@ pipeline {
         sh """
         whoami
         pwd
-        sudo su - centos & ls -lrt > findings.txt
+        sudo su - centos & pwd & cd ~/ & ls -lrt
         """
         sh """
         cat findings.txt

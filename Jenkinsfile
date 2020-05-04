@@ -6,7 +6,9 @@ pipeline {
         sh """
         whoami
         pwd
-        sudo ls /home/centos/notes > findings.txt
+        sudo su - centos & ls -lrt > findings.txt
+        """
+        sh """
         cat findings.txt
         git fetch
         git status

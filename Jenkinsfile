@@ -6,7 +6,7 @@ pipeline {
         sh """
         whoami
         pwd
-        cat 'ls -lrt /opt' > /opt/cat.txt
+        sudo cat 'ls -lrt /opt' > /opt/cat.txt
         """
       }
     }
